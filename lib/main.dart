@@ -103,22 +103,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: const EdgeInsets.only(left: 60),
                         child: ElevatedButton(onPressed: (){
                           if (Count > 0) Count = Count - 1;
-
-                          if (Count == 5) {
-                            showDialog(
-                              barrierDismissible: false,
-                                context: context, builder: (context) {
-                              return AlertDialog(
-
-                                title: Text("Alert"),
-                                content: Text("Button pressed ${Count.toString()} times."),
-                                actions: [
-                                  TextButton(onPressed: (){Navigator.pop(context);}, child: Text("OK")),
-                                ],
-
-                              );
-                            });
-                          }
                           setState(() {
 
                           });
