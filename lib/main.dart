@@ -1,150 +1,107 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.red,
-      ),
-      home: HomeScreen(),
+      title: 'Flutter Demo',
+      home: MyHomePage(),
     );
   }
 }
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
 
+class MyHomePage extends StatefulWidget {
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  int Count = 0;
+class _MyHomePageState extends State<MyHomePage> {
+  List<Item> items = [
+    Item('Item 1', false),
+    Item('Item 2', false),
+    Item('Item 3', false),
+    Item('Item 4', false),
+    Item('Item 5', false),
+  ];
+
+  int selectedCount = 0;
+
+  void _updateSelectedCount() {
+    int count = 0;
+    for (var item in items) {
+      if (item.isSelected) {
+        count++;
+      }
+    }
+    setState(() {
+      selectedCount = count;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Counter App"),
-        centerTitle: false,
+        title: Text("Selection Screen"),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 50),
+      body: ListView.builder(
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          return InkWell(
+            onTap: () {
+              setState(() {
+                items[index].isSelected = !items[index].isSelected;
+                _updateSelectedCount();
+              });
+            },
             child: Container(
-              width: 300,
-              height: 250,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.blue),
-              ),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text("Count: ", style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),),
+              width: items[index].isSelected ? double.infinity : null,
+              color: items[index].isSelected ? Colors.blue : null,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  items[index].name,
+                  style: TextStyle(
+                    color: items[index].isSelected ? Colors.white : Colors.black,
+                    fontSize: 16.0,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(Count.toString(), style: TextStyle(
-                      fontSize: 50,
-                      fontWeight: FontWeight.bold,
-                    ),),
-                  ),
-                  Row(
-
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 50),
-                        child: ElevatedButton(onPressed: (){
-                          Count = Count + 1;
-
-                          if (Count == 5 ) {
-
-                            showDialog(
-                                barrierDismissible: false,
-                                context: context, builder: (context) {
-                              return AlertDialog(
-
-                                title: Text("Alert"),
-                                content: Text("Button pressed ${Count.toString()} times."),
-                                actions: [
-                                  TextButton(onPressed: (){Navigator.pop(context);}, child: Text("OK")),
-                                ],
-
-                              );
-                            });
-                          }
-                          setState(() {
-
-                          });
-                        }, child: Text("+", style: TextStyle(
-                          fontSize: 50,
-                          color: Colors.black,
-                        ),),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.black,
-                          ),
-                        ),
-
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 60),
-                        child: ElevatedButton(onPressed: (){
-                          if (Count > 0) Count = Count - 1;
-                          setState(() {
-
-                          });
-                        }, child: Text("-", style: TextStyle(
-                          fontSize: 50,
-                          color: Colors.black,
-                        ),),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
-                        ),
-                        ),
-                      ),
-
-
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only( top: 10, left: 0),
-                    child: ElevatedButton(onPressed: (){
-
-                      Count = 0;
-                      setState(() {
-
-                      });
-                    }, child: Text("Reset", style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.black,
-                    ),),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        foregroundColor: Colors.black,
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
-          )
-        ],
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('Selected Items'),
+                content: Text('Number of selected items: $selectedCount'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Close'),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        child: Icon(Icons.check),
       ),
     );
   }
 }
 
+class Item {
+  String name;
+  bool isSelected;
+
+  Item(this.name, this.isSelected);
+}
